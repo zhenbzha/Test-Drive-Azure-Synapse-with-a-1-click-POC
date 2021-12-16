@@ -1296,6 +1296,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/serverless')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE DATABASE TripExplorationDB \n                COLLATE Latin1_General_100_BIN2_UTF8\n\nCREATE EXTERNAL DATA SOURCE TripLake\nWITH ( LOCATION = 'https://nokw4vuahtxfbigypoc.dfs.core.windows.net')                \n\nCREATE LOGIN data_explorer WITH PASSWORD = 'sbY<$(]3G7gj:GW<';\n\nCREATE USER data_explorer FOR LOGIN data_explorer;\nGO\nGRANT ADMINISTER DATABASE BULK OPERATIONS TO data_explorer;\nGO\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/public/trip-data.csv',\n            DATA_SOURCE = 'TripLake',\n            FORMAT='CSV',\n            PARSER_VERSION = '2.0'\n    ) AS [result]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "TripExplorationDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Data Exploration and ML Modeling - NYC taxi predict using Spark MLlib')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -1632,6 +1652,451 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Database 1')]",
+			"type": "Microsoft.Synapse/workspaces/databases",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"Ddls": [
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"Properties": {
+								"IsSyMSCDMDatabase": true
+							},
+							"Name": "Database 1",
+							"EntityType": "DATABASE",
+							"Source": {
+								"Provider": "ADLS",
+								"Location": "abfss://dlsnokpocfs1@nokw4vuahtxfbigypoc.dfs.core.windows.net/Database 1",
+								"Properties": {
+									"FormatType": "csv",
+									"LinkedServiceName": "nokw4vuahtxfbigypocws1-WorkspaceDefaultStorage"
+								}
+							}
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
+					},
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
+							"Namespace": {
+								"DatabaseName": "Database 1"
+							},
+							"Name": "fare",
+							"Description": "",
+							"EntityType": "TABLE",
+							"TableType": "EXTERNAL",
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"StorageDescriptor": {
+								"Columns": [
+									{
+										"Name": "medallion",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "hack_license",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "vendor_id",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "pickup_datetime",
+										"OriginDataTypeName": {
+											"TypeName": "timestamp",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"TimestampFormat": "YYYY-MM-DD HH:MM:SS.fffffffff",
+												"HIVE_TYPE_STRING": "timestamp"
+											}
+										}
+									},
+									{
+										"Name": "payment_type",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "fare_amount",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "surcharge",
+										"OriginDataTypeName": {
+											"TypeName": "long",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "long"
+											}
+										}
+									},
+									{
+										"Name": "mta_tax",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "tip_amount",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "tolls_amount",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "total_amount",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									}
+								],
+								"Format": {
+									"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+									"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+									"FormatType": "csv",
+									"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+									"Properties": {
+										"path": "abfss://public@nokw4vuahtxfbigypoc.dfs.core.windows.net//fares-data.csv",
+										"delimiter": ",",
+										"multiLine": "false",
+										"firstRowAsHeader": "true",
+										"serialization.format": "1",
+										"FormatTypeSetToDatabaseDefault": false,
+										"header": "true"
+									}
+								},
+								"Source": {
+									"Provider": "ADLS",
+									"Location": "abfss://public@nokw4vuahtxfbigypoc.dfs.core.windows.net//fares-data.csv",
+									"Properties": {
+										"LinkedServiceName": "nokw4vuahtxfbigypocws1-WorkspaceDefaultStorage",
+										"LocationSetToDatabaseDefault": false
+									}
+								},
+								"Properties": {
+									"textinputformat.record.delimiter": ",",
+									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
+								},
+								"Compressed": false,
+								"IsStoredAsSubdirectories": false
+							},
+							"Properties": {
+								"Description": "",
+								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
+								"PrimaryKeys": "",
+								"spark.sql.sources.provider": "csv"
+							},
+							"Retention": 0,
+							"Temporary": false,
+							"IsRewriteEnabled": false
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
+					},
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
+							"Namespace": {
+								"DatabaseName": "Database 1"
+							},
+							"Name": "trip",
+							"Description": "",
+							"EntityType": "TABLE",
+							"TableType": "EXTERNAL",
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"StorageDescriptor": {
+								"Columns": [
+									{
+										"Name": "medallion",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "hack_license",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "vendor_id",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "rate_code",
+										"OriginDataTypeName": {
+											"TypeName": "long",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "long"
+											}
+										}
+									},
+									{
+										"Name": "store_and_fwd_flag",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "pickup_datetime",
+										"OriginDataTypeName": {
+											"TypeName": "timestamp",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"TimestampFormat": "YYYY-MM-DD HH:MM:SS.fffffffff",
+												"HIVE_TYPE_STRING": "timestamp"
+											}
+										}
+									},
+									{
+										"Name": "dropoff_datetime",
+										"OriginDataTypeName": {
+											"TypeName": "timestamp",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"TimestampFormat": "YYYY-MM-DD HH:MM:SS.fffffffff",
+												"HIVE_TYPE_STRING": "timestamp"
+											}
+										}
+									},
+									{
+										"Name": "passenger_count",
+										"OriginDataTypeName": {
+											"TypeName": "long",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "long"
+											}
+										}
+									},
+									{
+										"Name": "trip_time_in_secs",
+										"OriginDataTypeName": {
+											"TypeName": "long",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "long"
+											}
+										}
+									},
+									{
+										"Name": "trip_distance",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "pickup_longitude",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "pickup_latitude",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "dropoff_longitude",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									},
+									{
+										"Name": "dropoff_latitude",
+										"OriginDataTypeName": {
+											"TypeName": "float",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "float"
+											}
+										}
+									}
+								],
+								"Format": {
+									"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+									"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+									"FormatType": "csv",
+									"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+									"Properties": {
+										"path": "abfss://public@nokw4vuahtxfbigypoc.dfs.core.windows.net//trip-data.csv",
+										"delimiter": ",",
+										"multiLine": "false",
+										"firstRowAsHeader": "true",
+										"serialization.format": "1",
+										"FormatTypeSetToDatabaseDefault": false,
+										"header": "true"
+									}
+								},
+								"Source": {
+									"Provider": "ADLS",
+									"Location": "abfss://public@nokw4vuahtxfbigypoc.dfs.core.windows.net//trip-data.csv",
+									"Properties": {
+										"LinkedServiceName": "nokw4vuahtxfbigypocws1-WorkspaceDefaultStorage",
+										"LocationSetToDatabaseDefault": false
+									}
+								},
+								"Properties": {
+									"textinputformat.record.delimiter": ",",
+									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
+								},
+								"Compressed": false,
+								"IsStoredAsSubdirectories": false
+							},
+							"Properties": {
+								"Description": "",
+								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
+								"PrimaryKeys": "",
+								"spark.sql.sources.provider": "csv"
+							},
+							"Retention": 0,
+							"Temporary": false,
+							"IsRewriteEnabled": false
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/nokw4vuahtxfbigypocws1p1')]",
 			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
@@ -1648,26 +2113,6 @@
 			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/serverless')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "CREATE DATABASE TripExplorationDB \n                COLLATE Latin1_General_100_BIN2_UTF8\n\nCREATE EXTERNAL DATA SOURCE TripLake\nWITH ( LOCATION = 'https://nokw4vuahtxfbigypoc.dfs.core.windows.net')                \n\nCREATE LOGIN data_explorer WITH PASSWORD = 'sbY<$(]3G7gj:GW<';\n\nCREATE USER data_explorer FOR LOGIN data_explorer;\nGO\nGRANT ADMINISTER DATABASE BULK OPERATIONS TO data_explorer;\nGO\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/public/trip-data.csv',\n            DATA_SOURCE = 'TripLake',\n            FORMAT='CSV',\n            PARSER_VERSION = '2.0'\n    ) AS [result]",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "TripExplorationDB",
-						"poolName": "Built-in"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
 			"dependsOn": []
 		}
 	]
