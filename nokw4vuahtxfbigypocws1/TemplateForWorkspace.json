@@ -1649,6 +1649,26 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/serverless')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE DATABASE TripExplorationDB \n                COLLATE Latin1_General_100_BIN2_UTF8\n\nCREATE EXTERNAL DATA SOURCE TripLake\nWITH ( LOCATION = 'https://nokw4vuahtxfbigypoc.dfs.core.windows.net')                \n\nCREATE LOGIN data_explorer WITH PASSWORD = 'sbY<$(]3G7gj:GW<';\n\nCREATE USER data_explorer FOR LOGIN data_explorer;\nGO\nGRANT ADMINISTER DATABASE BULK OPERATIONS TO data_explorer;\nGO\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/public/trip-data.csv',\n            DATA_SOURCE = 'TripLake',\n            FORMAT='CSV',\n            PARSER_VERSION = '2.0'\n    ) AS [result]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "TripExplorationDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
 		}
 	]
 }
