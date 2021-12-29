@@ -33,6 +33,75 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/PauseResume')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "GET List",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://management.azure.com/subscriptions/',pipeline().parameters.SubscriptionID,'/resourceGroups/',pipeline().parameters.ResourceGroup,'/providers/Microsoft.Synapse/workspaces/',pipeline().parameters.WorkspaceName,'/sqlPools?api-version=2019-06-01-preview')",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"method": "GET",
+							"headers": {},
+							"disableCertValidation": false,
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://management.azure.com/"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"ResourceGroup": {
+						"type": "string",
+						"defaultValue": "ni-synapse-demo-rg"
+					},
+					"SubscriptionID": {
+						"type": "string",
+						"defaultValue": "4591c181-b2c0-4a55-93a9-f759859a214b"
+					},
+					"WorkspaceName": {
+						"type": "string",
+						"defaultValue": "nokw4vuahtxfbigypocws1"
+					},
+					"SQLPoolName": {
+						"type": "string",
+						"defaultValue": "nokw4vuahtxfbigypocws1p1"
+					},
+					"PauseorResume": {
+						"type": "string",
+						"defaultValue": "Pause"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/TripFaresDataPipeline')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -1833,8 +1902,8 @@
 									"Properties": {
 										"path": "abfss://public@nokw4vuahtxfbigypoc.dfs.core.windows.net//fares-data.csv",
 										"delimiter": ",",
-										"multiLine": "false",
 										"firstRowAsHeader": "true",
+										"multiLine": "false",
 										"serialization.format": "1",
 										"FormatTypeSetToDatabaseDefault": false,
 										"header": "true"
@@ -2055,8 +2124,8 @@
 									"Properties": {
 										"path": "abfss://public@nokw4vuahtxfbigypoc.dfs.core.windows.net//trip-data.csv",
 										"delimiter": ",",
-										"multiLine": "false",
 										"firstRowAsHeader": "true",
+										"multiLine": "false",
 										"serialization.format": "1",
 										"FormatTypeSetToDatabaseDefault": false,
 										"header": "true"
